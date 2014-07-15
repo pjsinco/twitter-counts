@@ -2,6 +2,10 @@
 
 <?php
 
+// PDO tutorial
+// http://wiki.hashphp.org/PDO_Tutorial_for_MySQL_Developers
+//   #Running_Simple_INSERT.2C_UPDATE.2C_or_DELETE_statements
+
 // set up error reporting for debugging
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
