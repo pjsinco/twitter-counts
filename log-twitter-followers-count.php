@@ -10,6 +10,7 @@ error_reporting(-1);
 require_once('config/config.php');
 require_once('inc/TwitterAPIExchange.php');
 
+
 /*
  * Set up Twitter API calls
  */
@@ -20,9 +21,6 @@ $settings = array(
   'consumer_secret' => TWITTER_CONSUMER_SECRET
 );
 
-
-//$url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-
 // get followers
 $url = 'https://api.twitter.com/1.1/followers/ids.json';
 
@@ -32,19 +30,23 @@ $t_api_call = new TwitterAPIExchange($settings);
 
 $t_api_resp = json_decode($t_api_call->setGetfield($get_field)
   ->buildOauth($url, $request_method)
-  ->performRequest());
+  ->performRequest(), true);
 
-var_dump($t_api_resp);
+/*
+ * Prepare to log to db
+ */
 
-foreach ($t_api_resp->ids as $id) {
-  echo $id . PHP_EOL;
-  
-}
+$followers_count = count($t_api_resp['ids']);
+
+date_default_timezone_set('America/Chicago');
+$date = date('Y-m-d');
 
 
-
+/*
+ * Log to db
+ */
 try {
-  $db = new PDO('mysql:host=' . DB_HOST . ';db=' .  DB_NAME . 
+  $db = new PDO('mysql:host=' . DB_HOST . ';dbname=' .  DB_NAME . 
     ';port=' . DB_PORT, DB_USER, DB_PASS);
 
   // for debugging
@@ -56,8 +58,14 @@ try {
   $error = 'Connection failed: ' . $e->getMessage();
 }
 
-// test connection
-//echo ($db) ? 'connected' : 'didn\'t connect';
+if (isset($error)) {
+  echo $error;
+}
 
+$q = "
+  insert into tc_followers_count(count_date, count)
+  values ('$date', $followers_count)
+";
 
-
+$rows = $db->exec($q);
+echo $rows . PHP_EOL;
