@@ -1,1 +1,5 @@
 config.php
+
+*.swp
+*.swo
+*.swm

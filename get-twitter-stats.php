@@ -4,7 +4,14 @@
 
 require_once('config/config.php');
 
-$db = new PDO('mysql:host=' . DB_HOST . ';db=' .  DB_NAME . 
-  ';port=' . DB_PORT, DB_USER, DB_PASS);
+try {
+  $db = new PDO('mysql:host=' . DB_HOST . ';db=' .  DB_NAME . 
+    ';port=' . DB_PORT, DB_USER, DB_PASS);
+} catch (PDOException $e) {
+  echo 'Connection failed: ' . $e->getMessage();
+}
 
-echo ($db) ? 'connected' : 'didn\'t connect';
+// test connection
+//echo ($db) ? 'connected' : 'didn\'t connect';
+
+
