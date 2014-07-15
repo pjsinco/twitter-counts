@@ -1,5 +1,9 @@
 config.php
 
+*-play.php
+*-play.js
+*-play.html
+
 *.swp
 *.swo
 *.swm
