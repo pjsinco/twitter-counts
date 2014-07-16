@@ -97,12 +97,12 @@ class DB
 //  }
 
   // performs a select and returns an array containing all the results
-  public function select_array($query) {
+  public function select_rows($query) {
 
     try {
       $results = $this->db->query($query);
     } catch (PDOException $e) {
-      $error = $e->getMessag();
+      $error = $e->getMessage();
     }
 
     if (!isset($error)) {
@@ -118,17 +118,10 @@ class DB
     // set up insert statement
 
     // make strings of the fields, values
-    $fields = '';
-    $values = '';
+    $data_split = $this->separate_fields_and_values($data, 'string');
+    $fields = $data_split['fields'];
+    $values = $data_split['values'];
 
-    foreach ($data as $field => $value) {
-      $fields .= $field . ',';
-      $values .= $this->db->quote($value) . ',';
-    }
-
-    $fields = substr($fields, 0, -1);
-    $values = substr($values, 0, -1);
-  
     // execute the insert
     try {
       $stmt = $this->db->prepare("
@@ -149,17 +142,67 @@ class DB
 
   }
 
-  public function update($table, $field_values, $where) {
-    $q = "
-      update $table 
-      set $field_values 
-      where $where
-    ";
-    $num_rows = $this->db->exec($q);
+  // updates a row
+  // DB::instance()->update_row('tc_user', $data, 'WHERE tc_user_id = 111');
+  public function update_row($table, $data, $where_condition) {
+
+    // work in progress
+    $data_split = $this->separate_fields_and_values($data, 'string');
+    $fields = $data_split['fields'];
+    $values = $data_split['values'];
+    
+    $q = "update $table set";
+
+    foreach ($data as $field => $value) {
+      if ($value === NULL) {
+        $q .= " $field = NULL, ";
+      } else {
+        $q .= " $field = " . $this->db->quote($value) . ",";
+      }
+    }
+    
+    $q = substr($q, 0, -1);
+
+    echo $q;
+
+    //$stmt = $this->db->prepare($q);
+
+    //$num_rows = $this->db->exec($q);
 
     return $num_rows;
   }
   
+  // separates an associative array into 2 arrays,
+  // one with the fields, one with the values
+  // @param  data
+  // @param  return_type
+  //    'string' or 'array'
+  private function separate_fields_and_values($data, $return_type) {
+
+    if ($return_type == 'string') {
+      $fields = '';
+      $values = '';
+      foreach ($data as $field => $value) {
+        $fields .= $field . ',';
+        $values .= $this->db->quote($value) . ',';
+      }
+      $fields = substr($fields, 0, -1);
+      $values = substr($values, 0, -1);
+    } else {
+      $fields = array();
+      $values = array();
+      foreach ($data as $field => $value) {
+        array_push($fields, $field);
+        array_push($values, $this->db->quote($value));
+      }
+    }
+
+    return array(
+      'fields' => $fields,
+      'values' => $values
+    );
+
+  }
 
 } // eoc
 
