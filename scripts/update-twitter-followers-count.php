@@ -11,28 +11,31 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
-require_once('config/config.php');
-require_once('inc/TwitterAPIExchange.php');
+require_once('../config/config.php');
+require_once('../vendor/TwitterAPIExchange.php');
+require_once('../inc/DB.php');
 
-date_default_timezone_set('America/Chicago');
-$date = date('Y-m-d');
+//date_default_timezone_set('America/New_York');
+//$date = date('Y-m-d');
 
-try {
-  $db = new PDO('mysql:host=' . DB_HOST . ';dbname=' .  DB_NAME . 
-    ';port=' . DB_PORT, DB_USER, DB_PASS);
+//try {
+//  $db = new PDO('mysql:host=' . DB_HOST . ';dbname=' .  DB_NAME . 
+//    ';port=' . DB_PORT, DB_USER, DB_PASS);
+//
+//  // for debugging
+//  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING); 
+//
+//  // for production
+//  //$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//} catch (PDOException $e) {
+//  $error = 'Connection failed: ' . $e->getMessage();
+//}
+//
+//if (isset($error)) {
+//  echo $error;
+//}
 
-  // for debugging
-  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING); 
-
-  // for production
-  //$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-  $error = 'Connection failed: ' . $e->getMessage();
-}
-
-if (isset($error)) {
-  echo $error;
-}
+$db = new DB();
 
 /*
  * set up twitter api calls
@@ -67,8 +70,9 @@ foreach ($users as $user) {
     insert into tc_followers_count(count_date, count, user_id)
     values ('$date', $followers_count, '" . $user['user_id'] . "')";
   
-  $rows = $db->exec($q);
-  echo $rows . PHP_EOL;
+  //todo
+  //$rows = $db->update('tc_followers_count', 
+  //echo $rows . PHP_EOL;
 
 }
 
