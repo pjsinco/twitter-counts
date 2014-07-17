@@ -1,3 +1,4 @@
+-- original
 create table tc_user (
   tc_user_id mediumint auto_increment primary key,
   twitter_user_id varchar(72),
@@ -5,22 +6,56 @@ create table tc_user (
   unique key (twitter_user_id)
 )
 
+--new 2014-07-17
+--from twitter book
+create table `tc_user` (
+  `last_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_id` BIGINT UNSIGNED NOT NULL,
+  `screen_name` VARCHAR(20) NOT NULL,
+  `name` VARCHAR(20) DEFAULT NULL,
+  `profile_image_url` VARCHAR(200) DEFAULT NULL,
+  `location` VARCHAR(100) DEFAULT NULL,
+  `url` VARCHAR(100) DEFAULT NULL,
+  `description` VARCHAR(160) DEFAULT NULL,
+  `created_at` DATETIME NOT NULL,
+  `followers_count` INT(10) UNSIGNED DEFAULT NULL,
+  `friends_count` INT(10) UNSIGNED DEFAULT NULL,
+  `statuses_count` INT(10) UNSIGNED DEFAULT NULL,
+  `listed_count` INT(10) UNSIGNED DEFAULT NULL,
+  `protected` TINYINT(1) NOT NULL,
+  `suspended` TINYINT(1) NOT NULL,
+  `lang` VARCHAR(2) NOT NULL,
+  `last_tweet_date` DATETIME NOT NULL,
+  primary key (`user_id`),
+  index `screen_name` (`screen_name`),
+  index `followers_count` (`followers_count`),
+  index `friends_count` (`friends_count`),
+  index `statuses_count` (`statuses_count`),
+  index `last_updated` (`last_updated`),
+  index `last_tweet_date` (`last_tweet_date`)
+) ENGINE=MyISAM DEFAULT charset=utf8
+
 create table tc_followers_count (
-  tc_count_id mediumint auto_increment primary key,
+  `user_id` BIGINT UNSIGNED NOT NULL,
   count_date date not null,
   count mediumint not null,
-  user_id varchar(72),
   unique key (count_date, count),
-  foreign key (user_id) references tc_user(twitter_user_id)
+  key `user_id` (`user_id`)
 )
 
+-- based in part on twitter book
 create table tc_tweet (
-  tc_tweet_id char(8) primary key,
-  tweet_id integer,
-  created date,
-  retweet_count mediumint,
-  favorite_count mediumint,
-  twitter_id_created varchar(72)
+  tweet_id bigint unsigned not null,
+  tweet_text varchar(160) not null,
+  created_at datetime not null,
+  user_id bigint unsigned not null,
+  is_rt tinyint(1) not null,
+  retweet_count int not null,
+  favorite_count int not null,
+  primary key (`tweet_id`),
+  key `created_at` (`created_at`),
+  key `user_id` (`user_id`),
+  key `retweet_count` (`retweet_count`)
 )
 
 create table tc_follower (
