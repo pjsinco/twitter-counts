@@ -1,7 +1,7 @@
 <?php 
 
 require_once('../vendor/simpletest/autorun.php');
-require_once('oauth_lib.php');
+require_once('../inc/oauth_lib.php');
 require_once('../config/config.php');
 
 class TestConnection extends UnitTestCase
