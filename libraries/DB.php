@@ -143,7 +143,8 @@ class DB
   }
 
   // updates a row
-  // DB::instance()->update_row('tc_user', $data, 'WHERE tc_user_id = 111');
+  // DB::instance()->update_row('tc_user', $data, 
+  //  'WHERE tc_user_id = 111');
   public function update_row($table, $data, $where_condition) {
 
     // work in progress
@@ -154,7 +155,7 @@ class DB
     $q = "update $table set";
 
     foreach ($data as $field => $value) {
-      if ($value === NULL) {  // allow for null values
+      if ($value === NULL) {  // allow for null values; needed?
         $q .= " $field = NULL,";
       } else {
         $q .= " $field = " . $this->db->quote($value) . ",";
