@@ -14,7 +14,7 @@ $conn = get_connection();
 
 // make the api request
 $conn->request( 'GET', $conn->url('1.1/users/show'), 
-  array('user_id' => $users[1]['user_id']));
+  array('user_id' => $users[0]['user_id']));
 
 // get the http response code for the api request
 $response_code = $conn->response['code'];

@@ -1,1 +1,1 @@
-Script for grabbing Twitter statistics from Twitter API
+Scripts for grabbing Twitter statistics from Twitter API

@@ -36,10 +36,18 @@ class TestOfDB extends UnitTestCase
     //$this->expectError($this->db->select('select * from tcuser'));
   }
 
+  function test_select_rows_result() {
+    $results = DB::instance()->select_rows('select * from tc_user');
+    $this->assertTrue($results > 0);
+  }
+
   function test_insert() {
     $random_id = $this->create_random_user();
 
     $this->assertTrue($random_id);
+
+    // clean up
+    //$this->delete_random_user($random_id + 1);
   }
 
   function test_update() {
@@ -59,6 +67,8 @@ class TestOfDB extends UnitTestCase
     // 3. run the test
     $this->assertEqual($rows, 1);
       
+    // clean up
+    //$this->delete_random_user($random_id + 1);
   }
 
   function test_update_with_null_value() {
@@ -74,6 +84,9 @@ class TestOfDB extends UnitTestCase
       $where_condition);
     
     $this->assertEqual($rows, 1);
+  
+    // delete random user
+    //$this->delete_random_user($random_id);
   }
 
   // inserts a random user into tc_user
@@ -91,6 +104,15 @@ class TestOfDB extends UnitTestCase
     } else {
       return false; 
     }
+  }
+
+  private function delete_random_user($id) {
+    $q = "
+      delete from tc_user
+      where user_id = $id
+    ";
+
+    DB::instance()->query($q);
   }
   
 

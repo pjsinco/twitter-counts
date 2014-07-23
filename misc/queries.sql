@@ -107,6 +107,23 @@ create table tc_tweet_retweet (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 
 -- based on twitter book
+create table `engagement_account` (
+  `user_id` BIGINT UNSIGNED NOT NULL,
+  `screen_name` VARCHAR(20) NOT NULL,
+  `old_timeline_collected` datetime NOT NULL,
+  `new_timeline_collected` datetime NOT NULL,
+  `old_search_collected` datetime NOT NULL,
+  `new_search_collected` datetime NOT NULL,
+  `search_since_id` bigint unsigned NOT NULL,
+  `old_dms_sent_collected` datetime NOT NULL,
+  `new_dms_sent_collected` datetime NOT NULL,
+  `old_dms_received_collected` datetime NOT NULL,
+  `new_dms_received_collected` datetime NOT NULL,
+  primary key (`user_id`),
+  index `screen_name` (`screen_name`)
+) ENGINE=InnoDB DEFAULT charset=latin1
+
+-- based on twitter book
 create table `tc_leader` (
   `user_id` BIGINT UNSIGNED NOT NULL,
   `screen_name` VARCHAR(20) NOT NULL,
@@ -143,6 +160,28 @@ from tc_leader
 where old_timeline_collected = '0000-00-00'
 
 
+insert into tc_engagement_account(user_id, screen_name)
+values 
+  (19262807, 'TheDOmagazine'),
+  (273614983, 'AOAforDOs')
+
+insert into tc_leader(user_id, screen_name)
+values 
+  (21906739, 'PhysiciansPract'),
+  (37036394, 'DrJonathan'),
+  (32907693, 'DrSteinbaum'),
+  (16858606, 'doctorty'),
+  (513711985, 'DrJenCaudle')
+on duplicate key update
+
+  (11274452, 'kevinmd'),
+
+select user_id
+from tc_leader
+where old_timeline_collected = '0000-00-00'
+
+delete from tc_user where user_id in (2874 ,7515 ,8909 ,13827 ,14802 ,17114 ,18694, 19681)
+
 --**list of tc_user fields**
 --
 --last_updated 
@@ -162,3 +201,12 @@ where old_timeline_collected = '0000-00-00'
 --suspended 
 --lang 
 --last_tweet_date 
+
+--**list of tc_tweet fields**
+--tweet_id
+--tweet_text
+--created_at
+--user_id
+--is_rt
+--retweet_count
+--favorite_count
