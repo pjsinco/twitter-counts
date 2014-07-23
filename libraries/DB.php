@@ -52,6 +52,7 @@ class DB
   }
 
   // returns a quoted string safe to pass into a sql query
+  // todo needed?
   public function escape($str) {
     return $this->db->quote($str);
   }

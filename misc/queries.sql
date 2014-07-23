@@ -138,4 +138,27 @@ update tc_user
 set
 where
 
+select *
+from tc_leader
+where old_timeline_collected = '0000-00-00'
 
+
+--**list of tc_user fields**
+--
+--last_updated 
+--user_id 
+--screen_name 
+--name 
+--profile_image_url 
+--location 
+--url 
+--description 
+--created_at 
+--followers_count 
+--friends_count 
+--statuses_count 
+--listed_count 
+--protected 
+--suspended 
+--lang 
+--last_tweet_date 
