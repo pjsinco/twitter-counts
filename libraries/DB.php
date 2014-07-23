@@ -154,8 +154,8 @@ class DB
     $q = "update $table set";
 
     foreach ($data as $field => $value) {
-      if ($value === NULL) {
-        $q .= " $field = NULL, ";
+      if ($value === NULL) {  // allow for null values
+        $q .= " $field = NULL,";
       } else {
         $q .= " $field = " . $this->db->quote($value) . ",";
       }
@@ -163,11 +163,13 @@ class DB
     
     $q = substr($q, 0, -1);
 
-    echo $q;
+    $q .= ' ' . $where_condition;
 
-    //$stmt = $this->db->prepare($q);
+    echo '<pre>'; var_dump($q); echo '</pre>'; // debug
 
-    //$num_rows = $this->db->exec($q);
+    $stmt = $this->db->prepare($q);
+
+    $num_rows = $this->db->exec($q);
 
     return $num_rows;
   }

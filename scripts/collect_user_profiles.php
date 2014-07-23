@@ -54,7 +54,7 @@ function collect_user_profiles($user_list) {
       $lang           = DB::instance()->escape($user['lang']);
       $last_tweet_date= DB::instance()->escape($user['location']);
       // todo finish this cond'l stmt
-      if (empty($user['protected']) {
+      if (empty($user['protected'])) {
         $protected = 0;
       }
         $protected      = DB::instance()->escape($user['location']);

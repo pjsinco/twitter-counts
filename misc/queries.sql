@@ -1,9 +1,8 @@
 -- original
 create table tc_user (
-  tc_user_id mediumint auto_increment primary key,
   twitter_user_id varchar(72),
   screen_name varchar(128),
-  unique key (twitter_user_id)
+  primary key (`twitter_user_id`)
 )
 
 --new 2014-07-17
@@ -70,7 +69,12 @@ create table tc_mention (
   created date
 )
 
-
 insert into tc_user (twitter_user_id, screen_name)
-values ('273614983', 'AOAforDOs')
---values ('19262807', 'TheDOmagazine')
+values ('273614983', 'AOAforDOs'),
+('19262807', 'TheDOmagazine')
+
+update tc_user
+set
+where
+
+
