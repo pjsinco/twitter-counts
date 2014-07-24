@@ -145,7 +145,9 @@ class DB
 
   // updates a row
   // DB::instance()->update_row('tc_user', $data, 
-  //  'WHERE tc_user_id = 111');
+  //  'WHERE tc_user_id = 111', 'last_updated');
+  // @param $col_for_timestamp  
+  //      column to be filled with mysql's now() function
   public function update_row($table, $data, $where_condition, 
     $col_for_timestamp = NULL) {
 
@@ -163,6 +165,11 @@ class DB
         $q .= " $field = " . $this->db->quote($value) . ",";
       }
     }
+    
+    // if a column for a timestamp has been specified, add it to query
+    if ($col_for_timestamp) {
+      $q .= " $col_for_timestamp = NOW(),";
+    }
 
     echo '<pre>'; var_dump($q); echo '</pre>'; // debug
     
@@ -177,7 +184,7 @@ class DB
     try {
       $stmt = $this->db->prepare($q);
       $num_rows = $stmt->execute();
-    } catch (PDOException $d) {
+    } catch (PDOException $e) {
       $error = $e->getMessage();
     }
 

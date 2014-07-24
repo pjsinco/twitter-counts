@@ -8,7 +8,7 @@ create table tc_user (
 create table tc_user_test (
   user_id bigint unsigned not null,
   screen_name varchar(128),
-  last_udpated datetime,
+  last_updated datetime,
   primary key (`user_id`)
 )
 
