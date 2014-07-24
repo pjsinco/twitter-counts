@@ -180,18 +180,20 @@ where old_timeline_collected = '0000-00-00'
 insert into tc_engagement_account(user_id, screen_name)
 values 
   (19262807, 'TheDOmagazine'),
-  (273614983, 'AOAforDOs')
+  (273614983, 'AOAforDOs'),
+  (1847542819, 'TheJAOA')
 
 insert into tc_leader(user_id, screen_name)
 values 
+  (11274452, 'kevinmd'),
   (21906739, 'PhysiciansPract'),
   (37036394, 'DrJonathan'),
   (32907693, 'DrSteinbaum'),
   (16858606, 'doctorty'),
   (513711985, 'DrJenCaudle')
-on duplicate key update
 
-  (11274452, 'kevinmd'),
+on duplicate key update ... --unfinished
+
 
 select user_id
 from tc_leader
@@ -235,3 +237,4 @@ select tag, count(tag)
 from tc_tweet_tag
 group by tag
 order by count(tag) asc
+

@@ -1,1 +1,15 @@
-1. run test_install.php
+location 552
+1. insert twitter engagement accounts
+  --see queries.sql
+
+2. insert leader accounts
+  --see queries.sql
+
+3. run test_install.php
+  -- run for through all TWITTER_USERS listed in config
+    . so we'll need to change the $users index in $conn->request
+
+loc 1203
+4. collect_old_leader_timeline.php
+
+
