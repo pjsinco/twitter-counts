@@ -129,7 +129,7 @@ while (true) {
         'tc_tweet_retweet',
         array(
           'tweet_id' => $tweet_id,
-          'created_at' => $created_at,
+          'created_at' => $tweet_created_at,
           'source_user_id' => $user_id,
           'target_user_id' => $retweet_user_id
         )
