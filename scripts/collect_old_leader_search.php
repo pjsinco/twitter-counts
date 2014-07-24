@@ -241,6 +241,7 @@ while (true) {
   } // end foreach
 } // end while
 
+
 // timestamp old_search_collected for this leader
 DB::instance()->update_row(
   'tc_leader',
