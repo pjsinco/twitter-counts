@@ -63,7 +63,7 @@ create table tc_tweet (
   key `user_id` (`user_id`),
   key `retweet_count` (`retweet_count`),
   key `favorite_count` (`favorite_count`)
-)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
 
 -- based on twitter book
 create table tc_tweet_tag (
@@ -148,7 +148,7 @@ create table `tc_leader` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
 -- based on twitter book
-create table  `tc_user_tags` (
+create table  `tc_user_tag` (
   `user_id` bigint unsigned not null,
   `tag` varchar(100) not null,
   key `user_id` (`user_id`),
