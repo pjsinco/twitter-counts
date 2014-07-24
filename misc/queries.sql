@@ -238,3 +238,10 @@ from tc_tweet_tag
 group by tag
 order by count(tag) asc
 
+select max(tweet_id), min(tweet_id) 
+from tc_tweet
+where user_id = 11274452
+
+select tweet_text, tweet_id, created_at
+from tc_tweet
+where created_at >= '2014-07-24'
