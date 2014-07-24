@@ -22,22 +22,22 @@ class TestOfDB extends UnitTestCase
     //todo - uncomment when these users are in the table
 
     //$this->assertTrue(DB::instance()->
-      //in_table('tc_user', "screen_name='TheDOmagazine'"));
+      //in_table('tc_user_test', "screen_name='TheDOmagazine'"));
     //$this->assertTrue(DB::instance()->
-      //in_table('tc_user', "user_id='19262807'"));
+      //in_table('tc_user_test', "user_id='19262807'"));
     $this->assertFalse(DB::instance()->
-      in_table('tc_user', "screen_name='justinbieber'"));
+      in_table('tc_user_test', "screen_name='justinbieber'"));
 
   }
 
   function test_select_rows_result_is_array() {
-    $results = DB::instance()->select_rows('select * from tc_user');
+    $results = DB::instance()->select_rows('select * from tc_user_test');
     $this->assertIsA($results, 'array');
     //$this->expectError($this->db->select('select * from tcuser'));
   }
 
   function test_select_rows_result() {
-    $results = DB::instance()->select_rows('select * from tc_user');
+    $results = DB::instance()->select_rows('select * from tc_user_test');
     $this->assertTrue($results > 0);
   }
 
@@ -56,13 +56,14 @@ class TestOfDB extends UnitTestCase
 
     // 2. update that row with a new user_id (increment it by 1)
     $data = array(
-      'user_id' => $random_id + 1
+      'user_id' => $random_id + 1,
+      'screen_name' => 'rand_' . ($random_id + 1)
     );
 
     $where_condition = 'WHERE user_id = ' . $random_id;
 
-    $rows = DB::instance()->update_row('tc_user', $data, 
-      $where_condition);
+    $rows = DB::instance()->update_row('tc_user_test', $data, 
+      $where_condition, 'last_updated');
 
     // 3. run the test
     $this->assertEqual($rows, 1);
@@ -80,7 +81,7 @@ class TestOfDB extends UnitTestCase
 
     $where_condition = 'WHERE user_id = ' . $random_id;
     
-    $rows = DB::instance()->update_row('tc_user', $data,
+    $rows = DB::instance()->update_row('tc_user_test', $data,
       $where_condition);
     
     $this->assertEqual($rows, 1);
@@ -89,7 +90,7 @@ class TestOfDB extends UnitTestCase
     //$this->delete_random_user($random_id);
   }
 
-  // inserts a random user into tc_user
+  // inserts a random user into tc_user_test
   // @return the user_id of the new random user
   private function create_random_user() {
     $random_id = rand(1000, 20000);
@@ -98,7 +99,7 @@ class TestOfDB extends UnitTestCase
       'screen_name' => 'rand_' . substr($random_id, 0, 3)
     );
 
-    $rows = DB::instance()->insert('tc_user', $data);
+    $rows = DB::instance()->insert('tc_user_test', $data);
     if ($rows) {
       return $random_id;
     } else {
@@ -108,7 +109,7 @@ class TestOfDB extends UnitTestCase
 
   private function delete_random_user($id) {
     $q = "
-      delete from tc_user
+      delete from tc_user_test
       where user_id = $id
     ";
 

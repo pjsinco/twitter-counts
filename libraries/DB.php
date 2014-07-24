@@ -163,12 +163,16 @@ class DB
         $q .= " $field = " . $this->db->quote($value) . ",";
       }
     }
+
+    echo '<pre>'; var_dump($q); echo '</pre>'; // debug
     
     $q = substr($q, 0, -1);
 
     $q .= ' ' . $where_condition;
 
     echo '<pre>'; var_dump($q); echo '</pre>'; // debug
+    echo '<pre>'; var_dump($col_for_timestamp); echo '</pre>'; // debug
+    echo '<pre>'; var_dump(PHP_EOL); echo '</pre>'; // debug
 
     try {
       $stmt = $this->db->prepare($q);

@@ -5,6 +5,13 @@ create table tc_user (
   primary key (`twitter_user_id`)
 )
 
+create table tc_user_test (
+  user_id bigint unsigned not null,
+  screen_name varchar(128),
+  last_udpated datetime,
+  primary key (`user_id`)
+)
+
 --new 2014-07-17
 --from twitter book
 create table `tc_user` (

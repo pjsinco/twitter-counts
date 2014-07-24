@@ -20,7 +20,6 @@ $q = "
 
 $results = DB::instance()->select_rows($q);
 
-
 if (!$results) {
   echo 'All the older leader timelines have already been collected.';
   exit;
