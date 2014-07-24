@@ -20,13 +20,20 @@ $q = "
 
 $results = DB::instance()->select_rows($q);
 
+
 if (!$results) {
   echo 'All the older leader timelines have already been collected.';
   exit;
 }
 
+// step through each leader
 for ($i = 0; $i < count($results); $i++) {
+
+  // prep the api request
   $user_id = $results[$i]['user_id'];
+
+  echo '<pre>'; var_dump($user_id); echo '</pre>'; // debug
+
 
   $params = array(
     'user_id' => $user_id,
@@ -45,7 +52,8 @@ for ($i = 0; $i < count($results); $i++) {
       $params['max_id'] = $max_id;
     } 
 
-    $conn->request( 'GET', $conn->url('1.1/statuses/user_timeline'), $params);
+    $conn->request( 'GET', $conn->url('1.1/statuses/user_timeline'), 
+      $params);
 
     // no more tweets returned for this account
     if ($conn->response['response'] == '[]') {
@@ -59,13 +67,16 @@ for ($i = 0; $i < count($results); $i++) {
   
     $results = json_decode($conn->response['response']);
 
+    // gather tweet info
     foreach ($results as $tweet) {
+
       $tweet_id = $tweet->id;
       $max_id = $tweet_id;
 
       // api sometimes returns duplicate tweets
       // ignore this one if it's already in the db
-      if (DB::instance()->in_table('tc_tweet', 'tweet_id = ' . $tweet_id)) {
+      if (DB::instance()->
+        in_table('tc_tweet', 'tweet_id = ' .  $tweet_id)) {
         continue;
       }
 
@@ -78,34 +89,109 @@ for ($i = 0; $i < count($results); $i++) {
     
       if (isset($tweet->retweeted_status)) {
       
-        // this is a retweet, so get the text and entities from the orig. tweet
+        // this is a retweet, so get the text and entities 
+        // from the orig. tweet
         $is_rt = 1;
         $tweet_text = $tweet->retweeted_status->text;
         $retweet_count = 0;
         $retweet_user_id = $tweet->retweeted_status->user->id;
         $entities = $tweet->retweeted_status->entities;
+      } else {
+        $is_rt = 0;
+        $entities = $tweet->entities;
       }
 
       // record the tweet
-      // todo
+      DB::instance()->insert(
+        'tc_tweet', 
+        array(
+          'tweet_id' => $tweet_id,
+          'tweet_text' => $tweet_text,
+          'created_at' => $created_at,
+          'user_id' => $user_id,
+          'is_rt' => $is_rt,
+          'retweet_count' => $retweet_count,
+          'favorite_count' => $favorite_count
+        )
+      );
 
-      // record retweets
-      // todo
+      // record any retweets
+      if ($is_rt) {
+
+        DB::instance()->insert(
+          'tc_tweet_retweet',
+          array(
+            'tweet_id' => $tweet_id,
+            'created_at' => $created_at,
+            'source_user_id' => $user_id,
+            'target_user_id' => $retweet_user_id
+          )
+        );
+
+      }
 
       // extract the hashtags from the entities object and record them
       // todo
+      if ($entities->hashtags) {
+        foreach ($entities->hashtags as $hashtag) {
+          $tag = $hashtag->text;
+          DB::instance()->insert(
+            'tc_tweet_tag',
+            array(
+              'tweet_id' => $tweet_id,
+              'user_id' => $user_id,
+              'tag' => $tag,
+              'created_at' => $created_at
+            )
+          );
+        }
+      }
 
-      // extract the @mentions from the entities object and record them
-      // todo
+      // extract the @mentions from the entities object 
+      // and record them
+      if ($entities->user_mentions) {
+        foreach ($entities->user_mentions as $user_mention) {
+          $target_user_id = $user_mention->id;
+          DB::instance()->insert(
+            'tc_tweet_mention',
+            array(
+              'tweet_id' => $tweet_id,
+              'created_at' => $created_at,
+              'source_user_id' => $user_id,
+              'target_user_id' => $target_user_id
+            )
+          );
+        }
+      }
 
       // extract the urls from the entities object adn record them
-      // todo
+      if ($entities->urls) {
+        foreach ($entities->urls as $url) {
+          $url = $url->expanded_url;
+          DB::instance()->insert(
+            'tc_tweet_url',
+            array(
+              'tweet_id' => $tweet_id,
+              'user_id' => $user_id,
+              'url' => $url,
+              'created_at' => $created_at 
+            )
+          );
+        }
+      }
     }
-  }
 
-  // record the fact that the old tweets for this leader account 
-  // have been collected
-  // todo
+    // record the fact that the old tweets for this leader account 
+    // have been collected
+    DB::instance()->update_row(
+      'tc_leader',
+      array(
+        'old_timeline_collected' => 'NOW()',
+        'user_id' => $user_id
+      ),
+      "WHERE user_id = $user_id"
+    );
+  }
 
 }
 

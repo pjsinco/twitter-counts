@@ -140,6 +140,16 @@ create table `tc_leader` (
   key `screen_name` (`screen_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 
+-- based on twitter book
+create table  `tc_user_tags` (
+  `user_id` bigint unsigned not null,
+  `tag` varchar(100) not null,
+  key `user_id` (`user_id`),
+  key `tag` (`tag`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
+
+
+
 create table tc_follower (
   tc_follower_id char(8) primary key,
   twitter_id varchar(72),

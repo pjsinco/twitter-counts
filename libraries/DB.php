@@ -146,7 +146,8 @@ class DB
   // updates a row
   // DB::instance()->update_row('tc_user', $data, 
   //  'WHERE tc_user_id = 111');
-  public function update_row($table, $data, $where_condition) {
+  public function update_row($table, $data, $where_condition, 
+    $col_for_timestamp = NULL) {
 
     // work in progress
     $data_split = $this->separate_fields_and_values($data, 'string');
@@ -169,11 +170,17 @@ class DB
 
     echo '<pre>'; var_dump($q); echo '</pre>'; // debug
 
-    $stmt = $this->db->prepare($q);
+    try {
+      $stmt = $this->db->prepare($q);
+      $num_rows = $stmt->execute();
+    } catch (PDOException $d) {
+      $error = $e->getMessage();
+    }
 
-    $num_rows = $this->db->exec($q);
+    $err_msg = $stmt->errorCode();
 
-    return $num_rows;
+    return ($err_msg == '00000' && !isset($error)) ? $num_rows : false;
+
   }
   
   // separates an associative array into 2 arrays,
