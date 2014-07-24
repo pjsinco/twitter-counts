@@ -126,7 +126,6 @@ while (true) {
     }
 
     // extract the hashtags from the entities object and record them
-    // todo
     if ($entities->hashtags) {
       foreach ($entities->hashtags as $hashtag) {
         $tag = $hashtag->text;

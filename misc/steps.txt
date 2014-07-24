@@ -12,4 +12,10 @@ location 552
 loc 1203
 4. collect_old_leader_timeline.php
 
+loc 1359
+5. collect_new_leader_timeline.php
+  -- set cronjob for once every hour
+
+loc 1511
+6. run timeline search with each leader's screen name
 
