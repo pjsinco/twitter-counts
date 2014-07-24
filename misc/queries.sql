@@ -227,3 +227,11 @@ delete from tc_user where user_id in (2874 ,7515 ,8909 ,13827 ,14802 ,17114 ,186
 --is_rt
 --retweet_count
 --favorite_count
+
+select count(*)
+from tc_tweet_retweet
+
+select tag, count(tag)
+from tc_tweet_tag
+group by tag
+order by count(tag) asc
