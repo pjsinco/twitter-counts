@@ -247,3 +247,32 @@ where user_id = 11274452
 select tweet_text, tweet_id, created_at
 from tc_tweet
 where created_at >= '2014-07-24'
+
+select distinct(user_id)
+from tc_tweet
+
+select count(user_id)
+from tc_user
+
+-- should be 0 if everything's working
+select count(distinct(user_id))
+from tc_tweet
+where user_id NOT IN (
+  select user_id
+  from tc_user
+)
+
+-- should be 0 if everything's working
+select count(distinct(source_user_id))
+from tc_tweet_mention
+where source_user_id NOT IN (
+  select user_id
+  from tc_user
+)
+
+select count(distinct(target_user_id))
+from tc_tweet_mention
+where target_user_id NOT IN (
+  select user_id
+  from tc_user
+)
