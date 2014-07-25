@@ -163,7 +163,7 @@ while (true) {
       'location' => $location,
       'description' => $description,
       'url' => $url,
-      'created_at' => $created_at,
+      'created_at' => $user_created_at,
       'friends_count' => $friends_count,
       'followers_count' => $followers_count,
       'statuses_count' => $statuses_count,
