@@ -190,7 +190,9 @@ values
   (37036394, 'DrJonathan'),
   (32907693, 'DrSteinbaum'),
   (16858606, 'doctorty'),
-  (513711985, 'DrJenCaudle')
+  (513711985, 'DrJenCaudle'),
+  (233364902, 'Atul_Gawande')
+
 
 on duplicate key update ... --unfinished
 

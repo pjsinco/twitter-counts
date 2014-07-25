@@ -41,22 +41,25 @@ foreach ($q_results as $row) {
 
     $user = json_decode($conn->response['response']);
 
-    // collect all user account values we want to record
-    $name              = $tweet->user->name;
-    $screen_name       = $tweet->user->screen_name;
-    $profile_image_url = $tweet->user->profile_image_url;
-    $location          = $tweet->user->location;
-    $description       = $tweet->user->description;
-    $url               = $tweet->user->url;
-    $created_at        = 
-      DB::instance()->date($tweet->user->created_at);
-    $friends_count     = $tweet->user->friends_count;
-    $followers_count   = $tweet->user->followers_count;
-    $statuses_count    = $tweet->user->statuses_count;
-    $listed_count      = $tweet->user->listed_count;
-    $lang              = $tweet->user->lang;
 
-    if (empty($user->protected) {
+    // collect all user account values we want to record
+    $user_id           = $user->id;
+    $name              = $user->name;
+    $screen_name       = $user->screen_name;
+    $profile_image_url = $user->profile_image_url;
+    $location          = $user->location;
+    $description       = $user->description;
+    $url               = $user->url;
+    $created_at        = 
+      DB::instance()->date($user->created_at);
+    $friends_count     = $user->friends_count;
+    $followers_count   = $user->followers_count;
+    $statuses_count    = $user->statuses_count;
+    $listed_count      = $user->listed_count;
+    $lang              = $user->lang;
+
+
+    if (empty($user->protected)) {
       // if an acct is not protected,
       // $user->protected is blank
       $protected = 0;
@@ -65,6 +68,33 @@ foreach ($q_results as $row) {
     }
 
     $last_tweet_date = DB::instance()->date($user->status->created_at);
-  }
+
+    $data = array(
+      'user_id' => $user_id,
+      'name' => $name,
+      'screen_name' => $screen_name,
+      'profile_image_url' => $profile_image_url,
+      'location' => $location,
+      'description' => $description,
+      'url' => $url,
+      'created_at' => $created_at,
+      'friends_count' => $friends_count,
+      'followers_count' => $followers_count,
+      'statuses_count' => $statuses_count,
+      'listed_count' => $listed_count,
+      'lang' => $lang,
+      'protected' => $protected,
+      'last_tweet_date' => $last_tweet_date
+    );
+
+
+    // decide whether we need to insert or update
+    if (!DB::instance()->in_table('tc_user', "user_id = $user_id")) {
+      DB::instance()->insert('tc_user', $data);
+    } else {
+      DB::instance()->update_row('tc_user', $data);
+    }
+
+  } // end else
   
 } // end foreach
