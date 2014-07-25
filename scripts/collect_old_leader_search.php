@@ -233,14 +233,13 @@ while (true) {
         );
       }
     }
-
-    if ($tweets_found == 0) {
-      break;
-    }
-
   } // end foreach
-} // end while
 
+  if ($tweets_found == 0) {
+    break;
+  }
+
+} // end while
 
 // timestamp old_search_collected for this leader
 DB::instance()->update_row(
