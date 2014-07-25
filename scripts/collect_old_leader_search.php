@@ -147,6 +147,7 @@ while (true) {
       DB::instance()->date($tweet->user->created_at);
     $friends_count     = $tweet->user->friends_count;
     $followers_count   = $tweet->user->followers_count;
+    $favorite_count    = $tweet->user->favorite_count;
     $statuses_count    = $tweet->user->statuses_count;
     $listed_count      = $tweet->user->listed_count;
     $lang              = $tweet->user->lang;
@@ -163,9 +164,10 @@ while (true) {
       'location' => $location,
       'description' => $description,
       'url' => $url,
-      'created_at' => $user_created_at,
+      'created_at' => $created_at,
       'friends_count' => $friends_count,
       'followers_count' => $followers_count,
+      'favorite_count' => $favorite_count,
       'statuses_count' => $statuses_count,
       'listed_count' => $listed_count,
       'lang' => $lang,

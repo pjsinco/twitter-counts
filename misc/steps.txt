@@ -15,6 +15,7 @@ loc 1203
 loc 1359
 5. collect_new_leader_timeline.php
   -- set cronjob for once every hour
+  0 * * * * *
 
 loc 1511
 6. run timeline search with each leader's screen name
@@ -22,5 +23,7 @@ loc 1511
   --probably need to one search every 15 minutes
     because of rate limits
 
+7. cronjob collect_new_leader_search.php
+  5 * * * * *
 
 
