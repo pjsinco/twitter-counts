@@ -30,7 +30,9 @@ loc 1875
 8. collect_leader_account_profiles.php
 
 loc 1983
-9. collect_mentioned_account_profiles.php
+9. cronjob collect_mentioned_account_profiles.php
+  20 * * * * 
 
 loc 2008
 10. collect_retweeted_account_profiles.php
+  40 * * * * 

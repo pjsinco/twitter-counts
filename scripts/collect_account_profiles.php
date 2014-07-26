@@ -24,8 +24,6 @@ function collect_account_profiles($query) {
 
   while (true) {
 
-    krumo($q_results);
-
     if (count($q_results) == 0) {
       return;
     }
