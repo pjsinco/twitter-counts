@@ -209,7 +209,7 @@ class DB
   //  'WHERE user_id = 111', 'last_updated');
   // @param $col_for_timestamp  
   //      column to be filled with mysql's now() function
-  public function update_row($table, $data, $where_condition, 
+  public function update_row($table, $data, $where_condition = NULL, 
     $col_for_timestamp = NULL) {
 
     // work in progress
@@ -235,7 +235,9 @@ class DB
 
     $q = substr($q, 0, -1);
 
-    $q .= ' ' . $where_condition;
+    if ($where_condition) {
+      $q .= ' ' . $where_condition;
+    }
 
     try {
       $stmt = $this->db->prepare($q);

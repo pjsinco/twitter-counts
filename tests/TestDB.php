@@ -78,6 +78,32 @@ class TestOfDB extends UnitTestCase
     //$this->delete_random_user($random_id + 1);
   }
   
+  function test_update_with_no_where_arg() {
+    // insert a new user with a random user_id
+    $rand_user = $this->create_random_user();
+    $this->assertTrue(DB::instance()->insert('tc_user_test', $rand_user));
+
+    // update that user a new screen name
+    $rand_user['screen_name'] = $rand_user['screen_name'] . '_rev';
+
+    // get count of rows in table
+    $result = DB::instance()->select_rows("
+      select count(*) as count
+      from tc_user_test
+    ");
+
+    $rows_in_table = (int) $result[0]['count'];
+
+    // update all the rows; tests $where_condition = NULL
+    $rows = DB::instance()->update_row(
+      'tc_user_test',
+      array(
+        'screen_name' => $rand_user['screen_name']
+      )
+    );
+
+    $this->assertTrue($rows_in_table == $rows);
+  }
 
   function test_update_with_null_value() {
     $rand_user = $this->create_random_user();

@@ -65,4 +65,14 @@ loc 5000
 17. collect_new_engagement_search.php
   20 * * * *
 
+loc 6900
+18. create new table: tc_friend
 
+loc 6915
+19. create new table: tc_follow_log
+
+loc 6951
+20. collect_engagement_friends.php
+  40 * * * * 
+
+21. 

@@ -155,8 +155,29 @@ create table  `tc_user_tag` (
   key `tag` (`tag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8
 
+-- based on twitter book
+create table `tc_friend` (
+  `user_id` bigint unsigned not null,
+  `current` tinyint not null,
+  primary key (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
+
+-- based on twitter book
+create table `tc_follow_log` (
+  `id` int not null auto_increment,
+  `user_id` bigint not null,
+  `event` enum('friend', 'unfriend', 'follow', 'unfollow') not null,
+  `created_at` timestamp not null default current_timestamp,
+  `tweet_sent` tinyint not null,
+  `dm_sent` tinyint not null,
+  primary key (`id`),
+  key `user_id` (`user_id`),
+  key `created_at` (`created_at`)
+) engine=MyISAM default charset=utf8 auto_increment=1
+  
 
 
+create table `tc_friend` (
 create table tc_follower (
   tc_follower_id char(8) primary key,
   twitter_id varchar(72),
