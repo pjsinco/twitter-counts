@@ -142,6 +142,7 @@ class DB
     return $err_msg == '00000' && !isset($error) ? true : false;
 
   }
+
   // ** NOT WORKING ** 
   //
   // if the primary key exists, update row; otherwise insert row;

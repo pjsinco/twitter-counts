@@ -101,7 +101,8 @@ function collect_account_profiles($query) {
         DB::instance()->insert('tc_user', $data);
         echo "Inserted $user_id" . PHP_EOL;
       } else {
-        DB::instance()->update_row('tc_user', $data);
+        DB::instance()->update_row('tc_user', $data, 
+          "where user_id = $user_id");
         echo "Updated $user_id" . PHP_EOL;
       }
 
