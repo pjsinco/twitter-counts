@@ -22,4 +22,20 @@ $q = "
 
 $q_results = DB::instance()->select_rows($q);
 
-krumo($q_results); exit;
+foreach ($q_results as $row) {
+
+  $user_id = $row['user_id'];
+
+  // see if this user can be found without an error
+  $conn->request(
+    'GET',
+    $conn->url('1.1/users/show'),
+    array(
+      'user_id' => $user_id
+    )
+  );
+
+  krumo($conn->response['code']); exit;
+  
+
+} // end foreach

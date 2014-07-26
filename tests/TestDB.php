@@ -7,10 +7,12 @@ require_once('../vendor/krumo/class.krumo.php');
 
 class TestOfDB extends UnitTestCase
 {
-  //public $db; 
 
-  function __construct() {
-    //$this->db = new DB();
+  function test_create_random_user() {
+    $rand_1 = $this->create_random_user();
+    $rand_2 = $this->create_random_user();
+    
+    $this->assertNotEqual($rand_1, $rand_2);
   }
 
   function test_escape() {
@@ -19,21 +21,29 @@ class TestOfDB extends UnitTestCase
 
   function test_in_table() {
     
-    //todo - uncomment when these users are in the table
+    $rand_user = $this->create_random_user();
+  
+    // insert random user
+    $this->assertTrue(
+      DB::instance()->insert('tc_user_test', $rand_user)
+    );
 
-    //$this->assertTrue(DB::instance()->
-      //in_table('tc_user_test', "screen_name='TheDOmagazine'"));
-    //$this->assertTrue(DB::instance()->
-      //in_table('tc_user_test', "user_id='19262807'"));
+    $this->assertTrue(DB::instance()->
+      in_table('tc_user_test', 
+        'screen_name=\'' . $rand_user['screen_name'] . '\''));
+    $this->assertTrue(DB::instance()->
+      in_table('tc_user_test', 'user_id=' . $rand_user['user_id']));
     $this->assertFalse(DB::instance()->
       in_table('tc_user_test', "screen_name='justinbieber'"));
 
   }
 
   function test_select_rows_result_is_array() {
+
     $results = DB::instance()->select_rows('select * from tc_user_test');
     $this->assertIsA($results, 'array');
     //$this->expectError($this->db->select('select * from tcuser'));
+
   }
 
   function test_select_rows_result() {
@@ -42,27 +52,23 @@ class TestOfDB extends UnitTestCase
   }
 
   function test_insert() {
-    $random_id = $this->create_random_user();
+    $rand_user = $this->create_random_user();
 
-    $this->assertTrue($random_id);
-
-    // clean up
-    //$this->delete_random_user($random_id + 1);
+    $this->assertTrue(DB::instance()->insert('tc_user_test', $rand_user));
+    
   }
 
   function test_update() {
     // 1. insert a new user with a random user_id
-    $random_id = $this->create_random_user();
+    $rand_user = $this->create_random_user();
+    $this->assertTrue(DB::instance()->insert('tc_user_test', $rand_user));
 
-    // 2. update that row with a new user_id (increment it by 1)
-    $data = array(
-      'user_id' => $random_id + 1,
-      'screen_name' => 'rand_' . ($random_id + 1)
-    );
+    // 2. update that user a new screen name
+    $rand_user['screen_name'] = $rand_user['screen_name'] . '_rev';
 
-    $where_condition = 'WHERE user_id = ' . $random_id;
+    $where_condition = 'WHERE user_id = ' . $rand_user['user_id'];
 
-    $rows = DB::instance()->update_row('tc_user_test', $data, 
+    $rows = DB::instance()->update_row('tc_user_test', $rand_user, 
       $where_condition, 'last_updated');
 
     // 3. run the test
@@ -72,39 +78,18 @@ class TestOfDB extends UnitTestCase
     //$this->delete_random_user($random_id + 1);
   }
   
-  function test_insert_or_update_row() {
-
-    $random_id = $this->create_random_user();
-
-    $data = array(
-      'user_id' => $random_id,
-      'screen_name' => 'rand_' . ($random_id)
-    );
-
-    DB::instance()->insert('tc_test_user', $data);
-  
-    $result = DB::instance()->insert_or_update_row(
-      'tc_user_test', 
-      array(
-        'user_id' => $random_id,
-        'screen_name' => 'rand_' . ($random_id + 1)
-      )
-    );
-
-    $this->assertTrue($result);
-
-  }
 
   function test_update_with_null_value() {
-    $random_id = $this->create_random_user();
+    $rand_user = $this->create_random_user();
+    $this->assertTrue(DB::instance()->insert('tc_user_test', $rand_user));
 
-    $data = array(
-      'screen_name' => NULL
-    );
+    $rand_user['screen_name'] = NULL;
 
-    $where_condition = 'WHERE user_id = ' . $random_id;
+    $this->assertNull($rand_user['screen_name']);
+
+    $where_condition = 'WHERE user_id = ' . $rand_user['user_id'];
     
-    $rows = DB::instance()->update_row('tc_user_test', $data,
+    $rows = DB::instance()->update_row('tc_user_test', $rand_user,
       $where_condition);
     
     $this->assertEqual($rows, 1);
@@ -113,21 +98,37 @@ class TestOfDB extends UnitTestCase
     //$this->delete_random_user($random_id);
   }
 
+  function test_delete_row() {
+    $rand_user = $this->create_random_user();
+    $this->assertTrue(DB::instance()->insert('tc_user_test', $rand_user));
+
+    $rows = DB::instance()->select_rows('
+      select *
+      from tc_user_test
+      where user_id = \'' . $rand_user['user_id'] . '\'
+    ');
+    $this->assertTrue($rows);
+
+    $result = DB::instance()->
+      delete_row(
+        'tc_user_test', 
+        'where user_id = ' . $rand_user['user_id'] 
+      );
+  }
+
+
   // inserts a random user into tc_user_test
   // @return the user_id of the new random user
   private function create_random_user() {
+
     $random_id = rand(1000, 20000);
+
     $data = array(
       'user_id' => $random_id,
       'screen_name' => 'rand_' . substr($random_id, 0, 5)
     );
 
-    $rows = DB::instance()->insert('tc_user_test', $data);
-    if ($rows) {
-      return $random_id;
-    } else {
-      return false; 
-    }
+    return $data;
   }
 
   private function delete_random_user($id) {
@@ -138,10 +139,5 @@ class TestOfDB extends UnitTestCase
 
     DB::instance()->query($q);
   }
-  
-
-
-
-
 }
 

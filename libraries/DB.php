@@ -8,6 +8,9 @@ error_reporting(-1);
 class DB
 {
 
+  const DB_STRING = 'string';
+  const DB_ARRAY = 'array';
+
   public $db;
   private static $instance;
 
@@ -114,12 +117,13 @@ class DB
 
   }
 
-  // add a tuple to a relation
+  // adds a tuple to a relation
   public function insert($table, $data) {
     // set up insert statement
 
     // make strings of the fields, values
-    $data_split = $this->separate_fields_and_values($data, 'string');
+    $data_split = $this->
+      separate_fields_and_values($data, self::DB_STRING);
     $fields = $data_split['fields'];
     $values = $data_split['values'];
 
@@ -139,7 +143,13 @@ class DB
     // '00000' == no error
     $err_msg = $stmt->errorCode();
 
-    return $err_msg == '00000' && !isset($error) ? true : false;
+    if ($err_msg == '00000' && !isset($error)) {
+      $result = true;
+    } else {
+      $result = false;
+    }
+
+    return $result;
 
   }
 
@@ -151,7 +161,8 @@ class DB
     $dup = '';
 
     // make comma-delim strings of the fields, values
-    $data_split = $this->separate_fields_and_values($data, 'string');
+    $data_split = $this->
+      separate_fields_and_values($data, self::DB_STRING);
     $fields = $data_split['fields'];
     $values = $data_split['values'];
 
@@ -178,9 +189,6 @@ class DB
         $stmt->bindValue($field, $value);
       }
 
-    
-      krumo($stmt->debugDumpParams()); exit;
-
       $stmt->execute();
 
     } catch (PDOException $e) {
@@ -205,7 +213,8 @@ class DB
     $col_for_timestamp = NULL) {
 
     // work in progress
-    $data_split = $this->separate_fields_and_values($data, 'string');
+    $data_split = $this->
+      separate_fields_and_values($data, self::DB_STRING);
     $fields = $data_split['fields'];
     $values = $data_split['values'];
     
@@ -228,9 +237,6 @@ class DB
 
     $q .= ' ' . $where_condition;
 
-    echo '<pre>'; var_dump($q); echo '</pre>'; // debug
-    echo '<pre>'; var_dump($col_for_timestamp); echo '</pre>'; // debug
-
     try {
       $stmt = $this->db->prepare($q);
       $num_rows = $stmt->execute();
@@ -243,12 +249,31 @@ class DB
     return ($err_msg == '00000' && !isset($error)) ? $num_rows : false;
 
   }
+
+  // deletes are row from a table
+  public function delete_row($table, $where_condition) {
+
+    $q = "
+      DELETE 
+      FROM $table
+      $where_condition
+    ";
+
+    try {
+      $stmt = $this->db->prepare($q);
+      $result = $stmt->execute();
+    } catch (PDOException $e) {
+      $error = $e->getMessage();
+    }
+    
+    return $result ? true : false;
+
+  } // end delete_row
   
   // separates an associative array into 2 arrays,
   // one with the fields, one with the values
   // @param  data
-  // @param  return_type
-  //    'string' or 'array'
+  // @param  return_type: string or array
   private function separate_fields_and_values($data, $return_type) {
 
     if ($return_type == 'string') {
