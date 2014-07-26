@@ -253,6 +253,8 @@ class DB
   }
 
   // deletes are row from a table
+  // @param table (string) the table to delete from
+  // @param $where (string); ex: 'where user_id = 139929'
   public function delete_row($table, $where_condition) {
 
     $q = "

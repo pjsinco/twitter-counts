@@ -67,9 +67,13 @@ loc 5000
 
 loc 6900
 18. create new table: tc_friend
+  -- note our addition to table: `friend_of`,
+    because we're tracking friends of several accounts
 
 loc 6915
 19. create new table: tc_follow_log
+  -- note our addition to table: `event_for`,
+    because we're tracking friends of several accounts
 
 loc 6951
 20. collect_engagement_friends.php

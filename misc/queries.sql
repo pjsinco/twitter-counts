@@ -159,6 +159,7 @@ create table  `tc_user_tag` (
 create table `tc_friend` (
   `user_id` bigint unsigned not null,
   `current` tinyint not null,
+  `friend_of` bigint unsigned not null,
   primary key (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8
 
@@ -167,6 +168,7 @@ create table `tc_follow_log` (
   `id` int not null auto_increment,
   `user_id` bigint not null,
   `event` enum('friend', 'unfriend', 'follow', 'unfollow') not null,
+  `event_for` bigint not null,
   `created_at` timestamp not null default current_timestamp,
   `tweet_sent` tinyint not null,
   `dm_sent` tinyint not null,
