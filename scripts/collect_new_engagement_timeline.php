@@ -1,101 +1,104 @@
 <?php
 
-require_once '../config/config.php';
-
 // set up error reporting for debugging
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
+require_once '../config/config.php';
 require_once '../inc/oauth_lib.php';
 require_once '../libraries/DB.php';
 include '../vendor/krumo/class.krumo.php';
 
-// prep for our api call
-$conn = get_connection();
 
-$users = unserialize(TWITTER_USERS);
-
-// get comma-delim list of user ids in TWITTER_USERS
-$user_ids = '';
-foreach ($users as $user) {
-  $user_ids .= $user['user_id'] . ',';
-}
-$user_ids = substr($user_ids, 0, -1);
-
+// get all leader accts that have had their old tweets collected
 $q = "
-  SELECT *
+  SELECT user_id, screen_name
   FROM tc_engagement_account
-  WHERE old_timeline_collected = '0000-00-00'
-    AND user_id in ($user_ids)
+  WHERE old_timeline_collected != '0000-00-00'
 ";
 
 $results = DB::instance()->select_rows($q);
 
-if (!$results) {
-  echo 'All the old engagement timelines have been collected.';
-  exit;
-}
-
 foreach ($results as $row) {
 
-  // prep the api request
-  $user_id = $row['user_id'];
-  
+  echo 'Collecting tweets for ' . $row['screen_name'] . PHP_EOL;
+  $user_id = $row['user_id'];  
+
+  file_tweets($user_id);
+
+  // timestamp this engagement acct
+  DB::instance()->update_row(
+    'tc_engagement_account',
+    array(), // dummy array arg
+    'where user_id = ' . $user_id,
+    'new_timeline_collected'
+  );
+}
+
+// get all new tweets for this user
+function file_tweets($user_id) {
+  $q = "
+    select max(tweet_id) as since_id
+    from tc_tweet
+    where user_id = $user_id
+  ";
+
+  $q_results = DB::instance()->select_rows($q);
+  $since_id = $q_results[0]['since_id'];
+
+  // prep for our api call
+  $conn = get_connection();
   $params = array(
     'user_id' => $user_id,
     'include_entities' => 'true',
     'include_rts' => 'true',
     'exclude_replies' => 'false',
     'trim_user' => 'true',
-    'count' => 100
+    'count' => 100,
+    'since_id' => $since_id
   );
-  
-  $max_id = 0;
+
   while (true) {
-  
-    if ($max_id != 0) {
-      $max_id--;
-      $params['max_id'] = $max_id;
-    } 
-  
-    $conn->request( 'GET', $conn->url('1.1/statuses/user_timeline'), 
-      $params);
-  
+
+    $conn->request(
+      'GET',
+      $conn->url('1.1/statuses/user_timeline'),
+      $params
+    );
+
     // no more tweets returned for this account
     if ($conn->response['response'] == '[]') {
-      break;
+      return;
     }
-  
+
     // api reqest failed
     if ($conn->response['code'] != 200) {
-      break;
+      return;
     }
-  
+
     $results = json_decode($conn->response['response']);
-  
-    // gather tweet info
+    
     foreach ($results as $tweet) {
-  
+      
       $tweet_id = $tweet->id;
-      $max_id = $tweet_id;
-  
+      $since_id = $tweet_id;
+
       // api sometimes returns duplicate tweets
       // ignore this one if it's already in the db
       if (DB::instance()->
         in_table('tc_tweet', 'tweet_id = ' .  $tweet_id)) {
         continue;
       }
-  
+
       // prep data for inserting into db
       $tweet_text = $tweet->text;
       $created_at = DB::instance()->date($tweet->created_at);
       $user_id = $tweet->user->id;
       $retweet_count = $tweet->retweet_count;
       $favorite_count = $tweet->favorite_count;
-  
+
       if (isset($tweet->retweeted_status)) {
-      
         // this is a retweet, so get the text and entities 
         // from the orig. tweet
         $is_rt = 1;
@@ -107,7 +110,7 @@ foreach ($results as $row) {
         $is_rt = 0;
         $entities = $tweet->entities;
       }
-  
+
       // record the tweet
       DB::instance()->insert(
         'tc_tweet', 
@@ -153,8 +156,7 @@ foreach ($results as $row) {
         }
       }
   
-      // extract the @mentions from the entities object 
-      // and record them
+      // extract the @mentions from the entities object and record them
       if ($entities->user_mentions) {
         foreach ($entities->user_mentions as $user_mention) {
           $target_user_id = $user_mention->id;
@@ -185,20 +187,8 @@ foreach ($results as $row) {
           );
         }
       }
-    }
+
+      echo "\tFiled: $tweet_text" . PHP_EOL;
+    } // end foreach
   } // end while
-  
-  // record the fact that the old tweets for this leader account 
-  // have been collected
-  DB::instance()->update_row(
-    'tc_engagement_account',
-    array(
-      'user_id' => $user_id
-    ),
-    "WHERE user_id = $user_id",
-    'old_timeline_collected'
-  );
-
-  echo 'Added timeline for ' . $row['screen_name'] . PHP_EOL;
-
-} // end foreach
+} // end collect_tweets
