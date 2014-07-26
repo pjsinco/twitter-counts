@@ -34,8 +34,38 @@ foreach ($q_results as $row) {
       'user_id' => $user_id
     )
   );
-
-  krumo($conn->response['code']); exit;
+  $response_code = $conn->response['code'];
   
+  //  404 says this account has been deleted
+  if ($response_code == 404) {
+    
+    // delete the user and all related data
+    DB::instance()->delete_row('tc_user', 'where user_id = ' . $user_id);
+    DB::instance()->
+      delete_row('tc_user_tag', 'where user_id = ' . $user_id);
+    DB::instance()->
+      delete_row('tc_tweet', 'where user_id = ' . $user_id);
+    DB::instance()->
+      delete_row('tc_tweet_mention', 
+        'where source_user_id = ' . $user_id . 'or target_user_id = ' .
+        $user_id);
+    DB::instance()->
+      delete_row('tc_tweet_retweet', 
+        'where source_user_id = ' . $user_id . 'or target_user_id = ' .
+        $user_id);
+    DB::instance()->
+      delete_row('tc_tweet_tag', 'where user_id = ' . $user_id); 
+    DB::instance()->
+      delete_row('tc_tweet_url', 'where user_id = ' . $user_id); 
+
+  } elseif ($response_code == 403) {
+    DB::instance()->update_row(
+      'tc_user', 
+      array(
+        'suspended' => 1
+      ),
+      'WHERE user_id = ' . $user_id
+    );
+  }
 
 } // end foreach

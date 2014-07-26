@@ -206,7 +206,7 @@ class DB
 
   // updates a row
   // DB::instance()->update_row('tc_user', $data, 
-  //  'WHERE tc_user_id = 111', 'last_updated');
+  //  'WHERE user_id = 111', 'last_updated');
   // @param $col_for_timestamp  
   //      column to be filled with mysql's now() function
   public function update_row($table, $data, $where_condition, 

@@ -38,5 +38,8 @@ loc 2008
   40 * * * * 
 
 loc 2174
-11. update_all_account_profiles
+11. update_all_account_profiles.php
   0 * * * *
+
+12. purge_user_accounts.php
+  10 * * * *
