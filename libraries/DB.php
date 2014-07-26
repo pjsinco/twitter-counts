@@ -266,7 +266,11 @@ class DB
       $error = $e->getMessage();
     }
     
-    return $result ? true : false;
+    if (isset($result)) {
+      return $result;
+    } else {
+      return false;
+    } 
 
   } // end delete_row
   

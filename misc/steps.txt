@@ -43,3 +43,7 @@ loc 2174
 
 12. purge_user_accounts.php
   10 * * * *
+
+loc 2263
+13. update_user_tags.php
+  0 0 * * *
