@@ -26,7 +26,6 @@ if (!$results) {
   exit;
 }
 
-
 // prep the api request
 $user_id = $results[0]['user_id'];
 

@@ -254,7 +254,9 @@ from tc_tweet
 select count(user_id)
 from tc_user
 
--- should be 0 if everything's working
+
+--------------------------------------------
+-- these should be 0 if everything's working
 select count(distinct(user_id))
 from tc_tweet
 where user_id NOT IN (
@@ -262,7 +264,6 @@ where user_id NOT IN (
   from tc_user
 )
 
--- should be 0 if everything's working
 select count(distinct(source_user_id))
 from tc_tweet_mention
 where source_user_id NOT IN (
@@ -276,3 +277,49 @@ where target_user_id NOT IN (
   select user_id
   from tc_user
 )
+
+select count(distinct(target_user_id))
+from tc_tweet_retweet
+where target_user_id NOT IN (
+  select user_id
+  from tc_user
+)
+
+select count(distinct(source_user_id))
+from tc_tweet_retweet
+where source_user_id NOT IN (
+  select user_id
+  from tc_user
+)
+--------------------------------------------
+
+select count(user_id)
+from tc_user
+where last_updated < date_sub(now(), interval 24 hour)
+limit 15000
+
+
+--------------------------------------------
+-- useful user tag searches
+select count(*) as count, tag
+from tc_user_tag
+group by tag
+order by count desc
+
+select u.screen_name, u.listed_count, u.followers_count, u.statuses_count
+from tc_user u inner join tc_user_tag ut
+  on u.user_id = ut.user_id
+where ut.tag = 'Healthcare'
+order by u.listed_count, u.followers_count, u.statuses_count desc
+
+select count(*) as count, tag
+from tc_user_tag
+where user_id in (
+  select user_id
+  from tc_user_tag
+  where tag = 'Healthcare'
+)
+group by tag
+order by count desc
+--------------------------------------------
+
