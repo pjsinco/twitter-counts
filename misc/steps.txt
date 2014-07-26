@@ -15,7 +15,7 @@ loc 1203
 loc 1359
 5. collect_new_leader_timeline.php
   -- set cronjob for once every hour
-  0 * * * * *
+  0 * * * *
 
 loc 1511
 6. run timeline search with each leader's screen name
@@ -24,7 +24,7 @@ loc 1511
     because of rate limits
 
 7. cronjob collect_new_leader_search.php
-  5 * * * * *
+  5 * * * *
 
 loc 1875
 8. collect_leader_account_profiles.php
@@ -36,3 +36,7 @@ loc 1983
 loc 2008
 10. collect_retweeted_account_profiles.php
   40 * * * * 
+
+loc 2174
+11. update_all_account_profiles
+  0 * * * *
