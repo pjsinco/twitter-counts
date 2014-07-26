@@ -35,7 +35,7 @@ function collect_account_profiles($query) {
     
     for ($i = 0; $i < 100; $i++) {
       $user_list_arr = array_pop($q_results);
-      $user_list .= $user_list_arr['target_user_id'] . ',';
+      $user_list .= $user_list_arr['user_id'] . ',';
     }
 
     // snip off last comma
