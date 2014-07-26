@@ -60,6 +60,8 @@ while (true) {
 
   // api reqest failed
   if ($conn->response['code'] != 200) {
+    echo 'API request failed in collecting searches for ' . 
+      $engagement_screen_name;
     break;
   }
 
