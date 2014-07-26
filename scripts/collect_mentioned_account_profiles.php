@@ -1,7 +1,7 @@
 <?php
 
 $q = "
-  select distinct(target_user_id)
+  select distinct(target_user_id) as user_id
   from tc_tweet_mention
   where target_user_id NOT IN (
     select distinct(user_id)
