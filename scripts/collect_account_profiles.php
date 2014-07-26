@@ -24,6 +24,12 @@ function collect_account_profiles($query) {
 
   while (true) {
 
+    krumo($q_results);
+
+    if (count($q_results) == 0) {
+      return;
+    }
+
     // put 100 user ids in comma delim list
     $user_list = '';
     
@@ -72,7 +78,7 @@ function collect_account_profiles($query) {
       $protected = (empty($user->protected)) ? 0 : 1;
 
       $last_tweet_date = (isset($user->status)) ? 
-          DB::instance()->date($user->status->created_at) : '0000-00-00';
+        DB::instance()->date($user->status->created_at) : '0000-00-00';
 
       $data = array(
         'user_id' => $user_id,
@@ -92,7 +98,14 @@ function collect_account_profiles($query) {
         'last_tweet_date' => $last_tweet_date
       );
         
-      // todo insert user into db
+      // insert user into db
+      if (!DB::instance()->in_table('tc_user', "user_id = $user_id")) {
+        DB::instance()->insert('tc_user', $data);
+        echo "Inserted $user_id" . PHP_EOL;
+      } else {
+        DB::instance()->update_row('tc_user', $data);
+        echo "Updated $user_id" . PHP_EOL;
+      }
 
     } // end foreach
 

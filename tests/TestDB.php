@@ -2,6 +2,7 @@
 
 require_once('../vendor/simpletest/autorun.php');
 require_once('../libraries/DB.php');
+require_once('../vendor/krumo/class.krumo.php');
 
 
 class TestOfDB extends UnitTestCase
@@ -11,7 +12,6 @@ class TestOfDB extends UnitTestCase
   function __construct() {
     //$this->db = new DB();
   }
-
 
   function test_escape() {
     $this->assertEqual("'Hooligan'", DB::instance()->escape('Hooligan'));
@@ -71,6 +71,29 @@ class TestOfDB extends UnitTestCase
     // clean up
     //$this->delete_random_user($random_id + 1);
   }
+  
+  function test_insert_or_update_row() {
+
+    $random_id = $this->create_random_user();
+
+    $data = array(
+      'user_id' => $random_id,
+      'screen_name' => 'rand_' . ($random_id)
+    );
+
+    DB::instance()->insert('tc_test_user', $data);
+  
+    $result = DB::instance()->insert_or_update_row(
+      'tc_user_test', 
+      array(
+        'user_id' => $random_id,
+        'screen_name' => 'rand_' . ($random_id + 1)
+      )
+    );
+
+    $this->assertTrue($result);
+
+  }
 
   function test_update_with_null_value() {
     $random_id = $this->create_random_user();
@@ -96,7 +119,7 @@ class TestOfDB extends UnitTestCase
     $random_id = rand(1000, 20000);
     $data = array(
       'user_id' => $random_id,
-      'screen_name' => 'rand_' . substr($random_id, 0, 3)
+      'screen_name' => 'rand_' . substr($random_id, 0, 5)
     );
 
     $rows = DB::instance()->insert('tc_user_test', $data);

@@ -142,6 +142,58 @@ class DB
     return $err_msg == '00000' && !isset($error) ? true : false;
 
   }
+  // ** NOT WORKING ** 
+  //
+  // if the primary key exists, update row; otherwise insert row;
+  // requires first field in $data to be primary key;
+  public function insert_or_update_row($table, $data) {
+    $dup = '';
+
+    // make comma-delim strings of the fields, values
+    $data_split = $this->separate_fields_and_values($data, 'string');
+    $fields = $data_split['fields'];
+    $values = $data_split['values'];
+
+    foreach ($data as $field => $value) {
+      $dup .= $field . ' = :' . $field . ',';
+    }  
+
+    // snip of the last comma
+    $dup = substr($dup, 0, -1);
+
+    // execute the insert
+    try {
+      $stmt = $this->db->prepare("
+        INSERT 
+          INTO $table 
+          ($fields)
+          VALUES ($values)
+          ON DUPLICATE KEY UPDATE
+            $dup
+      ");
+
+      foreach ($data as $field => $value) {
+        $f = ':' . $field;
+        $stmt->bindValue($field, $value);
+      }
+
+    
+      krumo($stmt->debugDumpParams()); exit;
+
+      $stmt->execute();
+
+    } catch (PDOException $e) {
+      $error = $e->getMessage();
+    }
+
+    // '0000' == no error
+    $err_msg = $stmt->errorCode();
+
+    return $err_msg == '00000' && !isset($error) ? true : false;
+
+  } // end update_or_insert_row
+
+
 
   // updates a row
   // DB::instance()->update_row('tc_user', $data, 
@@ -171,15 +223,12 @@ class DB
       $q .= " $col_for_timestamp = NOW(),";
     }
 
-    echo '<pre>'; var_dump($q); echo '</pre>'; // debug
-    
     $q = substr($q, 0, -1);
 
     $q .= ' ' . $where_condition;
 
     echo '<pre>'; var_dump($q); echo '</pre>'; // debug
     echo '<pre>'; var_dump($col_for_timestamp); echo '</pre>'; // debug
-    echo '<pre>'; var_dump(PHP_EOL); echo '</pre>'; // debug
 
     try {
       $stmt = $this->db->prepare($q);
