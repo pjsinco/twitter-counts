@@ -5,17 +5,15 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
-collect_user_profiles('19262807,273614983');
+require_once '../config/config.php';
+require_once '../inc/oauth_lib.php';
+require_once '../libraries/DB.php';
+include '../vendor/krumo/class.krumo.php';
 
 /*
  * @param $followers comma-separated list of twitter user id's
  */
 function collect_user_profiles($user_list) {
-  
-  require_once('../libraries/DB.php');
-  require_once('../inc/oauth_lib.php');
-  //require_once('../config/config.php');
-  //require_once('../inc/TwitterAPIExchange.php');
   
   $conn = get_connection();
   $conn->request(
@@ -25,50 +23,66 @@ function collect_user_profiles($user_list) {
   ); // end request
 
   $response_code = $conn->response['code'];
-  //echo '<pre>'; var_dump($conn->response); echo '</pre>';exit;
 
   if ($response_code <> 200) {
     echo "Error: $response_code\n";
     echo $conn->response['response'];
     return $response_code;
   } else {
-    $response_data = json_decode($conn->response['response'], true);
+    $results = json_decode($conn->response['response'], false);
 
-    foreach ($response_data as $user) {
-      echo '<pre>';
-      var_dump($user);
+    foreach ($results as $user) {
+      // collect all user account values we want to record
+      $user_id           = $user->id;
+      $name              = $user->name;
+      $screen_name       = $user->screen_name;
+      $profile_image_url = $user->profile_image_url;
+      $location          = $user->location;
+      $description       = $user->description;
+      $url               = $user->url;
+      $user_created_at   = 
+        DB::instance()->date($user->created_at);
+      $friends_count     = $user->friends_count;
+      $followers_count   = $user->followers_count;
+      $statuses_count    = $user->statuses_count;
+      $listed_count      = $user->listed_count;
+      $lang              = $user->lang;
 
-      $user_id = $user['id'];
-      $name = DB::instance()->escape($user['name']);
-      $screen_name = DB::instance()->escape($user['screen_name']);
-      $profile_image_url = DB::instance()->escape($user['screen_name']);
-      $location       = DB::instance()->escape($user['location']);
-      $url            = DB::instance()->escape($user['url']);
-      $description    = DB::instance()->escape($user['description']);
-      $created_at     = DB::instance()->escape($user['created_at']);
-      $followers_count= $user['followers_count'];
-      $friends_count  = $user['friends_count'];
-      $statuses_count = $user['statuses_count'];
-      $listed_count   = $user['listed_count'];
-      $suspended      = DB::instance()->escape($user['location']);
-      $lang           = DB::instance()->escape($user['lang']);
-      $last_tweet_date= DB::instance()->escape($user['location']);
-      // todo finish this cond'l stmt
-      if (empty($user['protected'])) {
-        $protected = 0;
+      $protected = (empty($user->protected)) ? 0 : 1;
+
+      $last_tweet_date = (isset($user->status)) ? 
+        DB::instance()->date($user->status->created_at) : '0000-00-00';
+
+      $data = array(
+        'user_id' => $user_id,
+        'name' => $name,
+        'screen_name' => $screen_name,
+        'profile_image_url' => $profile_image_url,
+        'location' => $location,
+        'description' => $description,
+        'url' => $url,
+        'created_at' => $user_created_at,
+        'friends_count' => $friends_count,
+        'followers_count' => $followers_count,
+        'statuses_count' => $statuses_count,
+        'listed_count' => $listed_count,
+        'lang' => $lang,
+        'protected' => $protected,
+        'last_tweet_date' => $last_tweet_date
+      );
+
+      // insert user into db
+      if (!DB::instance()->in_table('tc_user', "user_id = $user_id")) {
+        DB::instance()->insert('tc_user', $data);
+        echo "Inserted $user_id" . PHP_EOL;
+      } else {
+        DB::instance()->update_row('tc_user', $data, 
+          "where user_id = $user_id");
+        echo "Updated $user_id" . PHP_EOL;
       }
-        $protected      = DB::instance()->escape($user['location']);
 
-      
-      
-      echo '</pre>';
-      //$user_id = $user['user_id'];
-      //$user_id = $user['user_id'];
-      //$user_id = $user['user_id'];
-      //$user_id = $user['user_id'];
-      //$user_id = $user['user_id'];
     } // end foreach
 
-  }
-
+  } // endelse
+  return $response_code;
 }

@@ -79,4 +79,8 @@ loc 6951
 20. collect_engagement_friends.php
   40 * * * * 
 
-21. 
+loc 7033
+21. collect_engagement_friends_profiles.php
+  50 * * * * 
+
+
