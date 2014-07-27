@@ -21,6 +21,7 @@ $q_results = DB::instance()->select_rows($q);
 
 foreach ($q_results as $user) {
 
+  // set up engagement user id
   $user_id = $user['user_id'];
 
   $q = "
