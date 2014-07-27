@@ -44,6 +44,7 @@ foreach ($q_results as $user) {
     );
   }
   
+  // loop through all friends
   // start with a cursor value of -1, because this is our 
   // 1st collection request (loc6933)
   $cursor = -1;

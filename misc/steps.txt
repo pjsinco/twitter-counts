@@ -81,6 +81,8 @@ loc 6951
 
 loc 7033
 21. collect_engagement_friends_profiles.php
+  --note loop-breaking structures, such as break, continue:
+      are they right?
   50 * * * * 
 
 loc 7524
