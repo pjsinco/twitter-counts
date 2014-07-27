@@ -4,11 +4,6 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 
-require_once '../config/config.php';
-require_once '../inc/oauth_lib.php';
-require_once '../libraries/DB.php';
-include '../vendor/krumo/class.krumo.php';
-
 require 'collect_user_profiles.php';
 
 // get all engagement accts
@@ -31,8 +26,8 @@ foreach ($q_results as $user) {
       select user_id
       from tc_user
     )
-    LIMIT 15000
-  ";
+    LIMIT 5000 
+  "; // normal limit is 15000, but we're processing 3 accts
 
   $q_results = DB::instance()->select_rows($q);
   if (!$q_results) {
@@ -57,7 +52,11 @@ foreach ($q_results as $user) {
     // snip off last comma
     $user_list = substr($user_list, 0, -1);
 
-    $response_code = 
+    $response_code = collect_user_profiles($user_list);
+
+    if ($response_code != 200) {
+      break;
+    }
 
   } // endwhile
 

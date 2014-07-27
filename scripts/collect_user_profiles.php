@@ -74,7 +74,7 @@ function collect_user_profiles($user_list) {
       // insert user into db
       if (!DB::instance()->in_table('tc_user', "user_id = $user_id")) {
         DB::instance()->insert('tc_user', $data);
-        echo "Inserted $user_id" . PHP_EOL;
+        echo "\tInserted $user_id\r\n";
       } else {
         DB::instance()->update_row('tc_user', $data, 
           "where user_id = $user_id");
