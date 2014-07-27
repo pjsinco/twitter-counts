@@ -178,13 +178,13 @@ create table `tc_follow_log` (
 ) engine=MyISAM default charset=utf8 auto_increment=1
   
 
+create table `tc_follower` (
+  `user_id` bigint unsigned not null,
+  `current` tinyint not null,
+  `follower_of` bigint unsigned not null,
+  primary key (`user_id`)
+) engine=MyISAM default charset=utf8
 
-create table `tc_friend` (
-create table tc_follower (
-  tc_follower_id char(8) primary key,
-  twitter_id varchar(72),
-  created date
-)
 
 --MISC
 insert into tc_user (twitter_user_id, screen_name)

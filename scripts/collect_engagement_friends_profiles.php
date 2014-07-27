@@ -32,13 +32,13 @@ foreach ($q_results as $user) {
   $q_results = DB::instance()->select_rows($q);
   if (!$q_results) {
     echo 'All friends user accounts have been collected!';
-    exit;
+    continue;
   }
 
   while (true) {
 
     if (count($q_results) == 0) {
-      return;
+      continue;
     }
 
     // put 100 user ids in comma delim list

@@ -83,4 +83,10 @@ loc 7033
 21. collect_engagement_friends_profiles.php
   50 * * * * 
 
+loc 7524
+22. create new table: tc_follower
 
+23. collect_engagement_followers.php
+  45 * * * *
+
+24. 
