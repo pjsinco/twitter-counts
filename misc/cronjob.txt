@@ -23,7 +23,7 @@
 20 * * * * cd /var/www/engagement/code; php collect_mentioned_account_profiles.php
 40 * * * * cd /var/www/engagement/code; php collect_retweeted_account_profiles.php
 50 * * * * cd /var/www/engagement/code; php  collect_engagement_friends_profiles.php
-55 * * * * cd /var/www/engagement/code; php collect_engagement_followers.php
+55 * * * * cd /var/www/engagement/code; php collect_engagement_followers_profiles.php
 
 # Once per day
 0 0 * * * cd /var/www/engagement/code; php update_user_tags.php
