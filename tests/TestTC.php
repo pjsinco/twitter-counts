@@ -17,11 +17,11 @@ class TestTC extends UnitTestCase
     
   }
 
-  //function test_collect_engagement_with_friend() {
-    //$this->assertTrue(
-      //TC::instance()->collect_engagement(TC::FRIENDS) 
-    //);
-  //}
+  function test_collect_engagement_with_friend() {
+    $this->assertTrue(
+      TC::instance()->collect_engagement(TC::FRIENDS) 
+    );
+  }
 
   function test_collect_engagement_with_follower() {
     $this->assertTrue(
