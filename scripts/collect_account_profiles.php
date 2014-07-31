@@ -31,13 +31,16 @@ function collect_account_profiles($query) {
     // put 100 user ids in comma delim list
     $user_list = '';
     
-    for ($i = 0; $i < 100; $i++) {
+    $list_count = (count($q_results) > 99 ? 100 : count($q_results));
+    for ($i = 0; $i < $list_count; $i++) {
       $user_list_arr = array_pop($q_results);
       $user_list .= $user_list_arr['user_id'] . ',';
     }
 
     // snip off last comma
     $user_list = substr($user_list, 0, -1);
+
+    krumo($user_list); exit;
 
     // get the acct profiles of these 100 users
     $conn->request(
