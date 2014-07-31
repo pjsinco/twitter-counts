@@ -40,8 +40,6 @@ function collect_account_profiles($query) {
     // snip off last comma
     $user_list = substr($user_list, 0, -1);
 
-    krumo($user_list); exit;
-
     // get the acct profiles of these 100 users
     $conn->request(
       'GET',
