@@ -346,3 +346,21 @@ group by tag
 order by count desc
 --------------------------------------------
 
+--track how much data our app is collecting
+create table tc_collection_tracker (
+  `count_date` date not null,
+  `tc_engagement_account` int not null,
+  `tc_follow_log` int not null,
+  `tc_follower` int not null,
+  `tc_followers_count` int not null,
+  `tc_friend` int not null,
+  `tc_leader` int not null,
+  `tc_tweet` int not null,
+  `tc_tweet_mention` int not null,
+  `tc_tweet_retweet` int not null,
+  `tc_tweet_tag` int not null,
+  `tc_tweet_url` int not null,
+  `tc_user` int not null,
+  `tc_user_tag` int not null,
+  `tc_user_test` int not null
+)
