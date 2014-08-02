@@ -14,7 +14,7 @@ function collect_account_profiles($query) {
   
   // prep for our api call
   $conn = get_connection();
-
+  
   $q_results = DB::instance()->select_rows($query);
 
   if (count($q_results) == 0) {
@@ -41,8 +41,10 @@ function collect_account_profiles($query) {
     $user_list = substr($user_list, 0, -1);
 
     // get the acct profiles of these 100 users
+    // twitter api: 'You are strongly encouraged to use a POST 
+    //    for larger requests.'
     $conn->request(
-      'GET',
+      'POST',
       $conn->url('1.1/users/lookup'),
       array(
         'user_id' => $user_list
