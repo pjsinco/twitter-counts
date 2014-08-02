@@ -118,6 +118,8 @@ class DB
   }
 
   // adds a tuple to a relation
+  // @param $data array of field => value pairs
+  //   ex.: array('user_id' => '342352', 'tweet_id' => '209359')
   public function insert($table, $data) {
     // set up insert statement
 
