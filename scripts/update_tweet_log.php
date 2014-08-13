@@ -30,6 +30,14 @@ foreach ($results as $acct) {
 
 function update_tweet_log($user_id) {
 
+  // get id from a year agoj
+  //select tweet_id, created_at
+  //from tc_tweet
+  //where created_at >= date_sub(now(), INTERVAL 1 YEAR)
+  //  and user_id = 273614983
+  //order by created_at asc limit 1
+
+
   $conn = get_connection();
   $params = array(
     'user_id' => $user_id,

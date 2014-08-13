@@ -382,3 +382,20 @@ from tc_tweet
 where created_at >= date_sub(now(), INTERVAL 1 YEAR)
   and user_id = 273614983
 
+-- get tweets from past year
+select count(*)
+from tc_tweet
+where created_at >= date_sub(now(), INTERVAL 2 YEAR)
+  and user_id = 273614983
+
+-- get tweet from year ago
+select count(*)
+from tc_tweet
+where created_at >= date_sub(now(), INTERVAL 2 YEAR)
+  and user_id = 273614983
+
+select tweet_id, created_at
+from tc_tweet
+where created_at >= date_sub(now(), INTERVAL 1 YEAR)
+  and user_id = 273614983
+order by created_at asc limit 1
