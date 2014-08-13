@@ -43,7 +43,7 @@ function update_tweet_log($user_id) {
 
   $conn->request(
     'GET',
-    $conn->url('1.1/statuses/user_timeline')
+    $conn->url('1.1/statuses/user_timeline'),
     $params
   );
 
