@@ -81,7 +81,7 @@ function file_tweets($user_id) {
     
     foreach ($results as $tweet) {
       
-      $tweet_id = $tweet->id;
+      $tweet_id = $tweet->id_str;
       $since_id = $tweet_id;
 
       // api sometimes returns duplicate tweets
@@ -94,7 +94,7 @@ function file_tweets($user_id) {
       // prep data for inserting into db
       $tweet_text = $tweet->text;
       $created_at = DB::instance()->date($tweet->created_at);
-      $user_id = $tweet->user->id;
+      $user_id = $tweet->user->id_str;
       $retweet_count = $tweet->retweet_count;
       $favorite_count = $tweet->favorite_count;
 
@@ -104,7 +104,7 @@ function file_tweets($user_id) {
         $is_rt = 1;
         $tweet_text = $tweet->retweeted_status->text;
         $retweet_count = 0;
-        $retweet_user_id = $tweet->retweeted_status->user->id;
+        $retweet_user_id = $tweet->retweeted_status->user->id_str;
         $entities = $tweet->retweeted_status->entities;
       } else {
         $is_rt = 0;
@@ -159,7 +159,7 @@ function file_tweets($user_id) {
       // extract the @mentions from the entities object and record them
       if ($entities->user_mentions) {
         foreach ($entities->user_mentions as $user_mention) {
-          $target_user_id = $user_mention->id;
+          $target_user_id = $user_mention->id_str;
           DB::instance()->insert(
             'tc_tweet_mention',
             array(

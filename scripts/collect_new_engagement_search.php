@@ -66,8 +66,8 @@ function file_tweets($engagement_user_id, $engagement_screen_name,
     foreach ($tweets as $tweet) {
       $tweets_found++;
 
-      $tweet_id = $tweet->id;
-      $since_id = $tweet->id;
+      $tweet_id = $tweet->id_str;
+      $since_id = $tweet->id_str;
 
       // check to make sure tweet's not already in the db
       if (DB::instance()->
@@ -79,7 +79,7 @@ function file_tweets($engagement_user_id, $engagement_screen_name,
       $tweet_text = $tweet->text;
       $tweet_created_at = DB::instance()->date($tweet->created_at);
       $retweet_count = $tweet->retweet_count;
-      $user_id = $tweet->user->id;
+      $user_id = $tweet->user->id_str;
       $favorite_count = $tweet->favorite_count;
 
       if (isset($tweet->retweeted_status)) {
@@ -89,7 +89,7 @@ function file_tweets($engagement_user_id, $engagement_screen_name,
         $is_rt = 1;
         $tweet_text = $tweet->retweeted_status->text;
         $retweet_count = 0;
-        $retweet_user_id = $tweet->retweeted_status->user->id;
+        $retweet_user_id = $tweet->retweeted_status->user->id_str;
         $entities = $tweet->retweeted_status->entities;
       } else {
         $is_rt = 0;
@@ -192,7 +192,7 @@ function file_tweets($engagement_user_id, $engagement_screen_name,
       // ... and mentions ...
       if ($entities->user_mentions) {
         foreach ($entities->user_mentions as $user_mention) {
-          $target_user_id = $user_mention->id;
+          $target_user_id = $user_mention->id_str;
           DB::instance()->insert(
             'tc_tweet_mention',
             array(

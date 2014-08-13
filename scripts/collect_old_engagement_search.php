@@ -75,8 +75,8 @@ while (true) {
   foreach ($tweets as $tweet) {
     $tweets_found++;
 
-    $tweet_id = $tweet->id;
-    $max_id = $tweet->id;
+    $tweet_id = $tweet->id_str;
+    $max_id = $tweet->id_str;
 
     // the first tweet we receive has the highest tweet_id;
     // if we haven't received any tweets yet, record this tweet's id
@@ -94,7 +94,7 @@ while (true) {
     // prep data for inserting into db
     $tweet_text = $tweet->text;
     $tweet_created_at = DB::instance()->date($tweet->created_at);
-    $user_id = $tweet->user->id;
+    $user_id = $tweet->user->id_str;
     $retweet_count = $tweet->retweet_count;
     $favorite_count = $tweet->favorite_count;
 
@@ -105,7 +105,7 @@ while (true) {
       $is_rt = 1;
       $tweet_text = $tweet->retweeted_status->text;
       $retweet_count = 0;
-      $retweet_user_id = $tweet->retweeted_status->user->id;
+      $retweet_user_id = $tweet->retweeted_status->user->id_str;
       $entities = $tweet->retweeted_status->entities;
     } else {
       $is_rt = 0;
@@ -208,7 +208,7 @@ while (true) {
     // ... and mentions ...
     if ($entities->user_mentions) {
       foreach ($entities->user_mentions as $user_mention) {
-        $target_user_id = $user_mention->id;
+        $target_user_id = $user_mention->id_str;
         DB::instance()->insert(
           'tc_tweet_mention',
           array(

@@ -43,7 +43,7 @@ foreach ($q_results as $row) {
 
 
     // collect all user account values we want to record
-    $user_id           = $user->id;
+    $user_id           = $user->id_str;
     $name              = $user->name;
     $screen_name       = $user->screen_name;
     $profile_image_url = $user->profile_image_url;
