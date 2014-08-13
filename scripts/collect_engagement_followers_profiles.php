@@ -38,7 +38,7 @@ foreach ($q_results as $user) {
   while (true) {
 
     if (count($q_results) == 0) {
-      continue;
+      break;
     }
 
     // put 100 user ids in comma delim list
