@@ -372,3 +372,13 @@ from tc_tweet t inner join tc_engagement_account e
 where
   t.created_at >= date_sub(curdate(), interval 1 DAY)
 
+
+select
+from tc_user
+where user_id = 
+
+select count(*)
+from tc_tweet
+where created_at >= date_sub(now(), INTERVAL 1 YEAR)
+  and user_id = 273614983
+
