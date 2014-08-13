@@ -364,3 +364,11 @@ create table tc_collection_tracker (
   `tc_user_tag` int not null,
   `tc_user_test` int not null
 )
+
+
+select t.*
+from tc_tweet t inner join tc_engagement_account e
+  on t.user_id = e.user_id
+where
+  t.created_at >= date_sub(curdate(), interval 1 DAY)
+
